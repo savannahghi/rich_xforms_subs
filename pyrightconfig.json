@@ -1,0 +1,20 @@
+{
+  "exclude": [
+    "sims_meta_to_xls_form/lib/antr4/generated"
+  ],
+  "enableTypeIgnoreComments": true,
+  "pythonVersion": "3.9",
+  "reportConstantRedefinition": "error",
+  "reportDuplicateImport": "error",
+  "reportPrivateUsage": "error",
+  "reportUnusedClass": "warning",
+  "reportUnusedFunction": "warning",
+  "reportUnusedImport": "error",
+  "reportUnusedVariable": "warning",
+  "reportWildcardImportFromLibrary": "warning",
+  "strictDictionaryInference": true,
+  "strictListInference": true,
+  "strictParameterNoneValue": true,
+  "strictSetInference": true,
+  "typeCheckingMode": "basic"
+}
