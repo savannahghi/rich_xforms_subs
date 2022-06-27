@@ -175,7 +175,8 @@ cmake-build-debug/
 
 # IntelliJ
 .idea/*
-out/
+out/*
+!out/.gitkeep
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

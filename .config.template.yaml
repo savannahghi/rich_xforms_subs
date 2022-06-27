@@ -1,0 +1,54 @@
+# Setting relating to the main pipeline.
+# The main pipeline performs actions such as fetching forms, and submissions
+# from a source.
+main_pipeline:
+  # The transport used by components running in the main pipeline.
+  transport: "app.lib.transports.http.HTTPTransport"
+
+# Config specific to the `http_transport`.
+http_transport:
+  # The http transport adapter to use
+  transport_adapter: "app.lib.transports.http.ODKCentralHTTPTransportAdapter"
+  # Keyword arguments to pass the http transport adapter at initialization. The
+  # values given here are examples of values used with the
+  # `ODKCentralHTTPTransportAdapter`.
+  transport_adapter_kwargs:
+    instance_host_url: "https://odk.example.org"
+    project_id: "3"
+    email: "example@test.org"
+    password: "aSecurePassword123"
+    api_version: "v1"
+
+# The logging config to use. This tool use python's built it logging.
+# https://docs.python.org/3/library/logging.html
+# Logging is configured during the tools general set up, i.e when `app.setup()`
+# is called.
+# The logging configuration provided here should conform to Python's
+# `logging.config.dictConfig` format.
+# https://docs.python.org/3/library/logging.config.html#logging-config-dictschema
+logging:
+  version: 1
+  formatters:
+    simple:
+      format: "%(levelname)s: %(asctime)s %(module)s %(process)d %(message)s"
+    verbose:
+      format: "{levelname}: {asctime} - {process:d} {thread:d} - <module={module} | function={funcName} | line={lineno:d}> - {message}"
+      style: "{"
+  handlers:
+    console:
+      class: "logging.StreamHandler"
+      formatter: "simple"
+      level: "DEBUG"
+    file:
+      backupCount: 5
+      class: "logging.handlers.RotatingFileHandler"
+      encoding: "utf-8"
+      filename: "logs/xform_repack.log"
+      formatter: "verbose"
+      level: "DEBUG"
+      maxBytes: 1048576  # 1 MB
+  loggers:
+    app:
+      handlers: [ "console", "file" ]
+      level: "DEBUG"
+      propagate: true
