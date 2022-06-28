@@ -1,13 +1,11 @@
-import json
 from argparse import ArgumentParser
 from typing import Any, Mapping
 
 from lxml import etree
 
 import app
-from app.core import AppData, Transport, XForm
+from app.core import AppData, Transport
 from app.lib import Pipeline
-from app.loaders.load_xform import do_load_form
 from app.use_cases.main_pipeline import (
     AppDataToJson,
     FetchForms,
@@ -50,9 +48,10 @@ def argparse_factory(prog_name: str = "rich_xforms_subs") -> ArgumentParser:
     parser = ArgumentParser(
         prog=prog_name,
         description=(
-            "A tool used to enrich xforms submissions by adding the original "
-            "question labels to the submissions and serializing the final "
-            "result into an easy to consume format."
+            "An ETL tool used to process XForms submissions including "
+            "enriching the submissions by adding the original question labels "
+            "to the submissions and serializing the final result into an easy "
+            "to consume format."
         ),
         epilog="Let's go ;-)"
     )
@@ -103,19 +102,6 @@ def argparse_factory(prog_name: str = "rich_xforms_subs") -> ArgumentParser:
 
 def read_form_xls_file(form_source: str) -> etree._ElementTree:  # type: ignore
     return etree.parse(form_source)
-
-
-def simple_workflow() -> None:
-    form_xml = read_form_xls_file("assets/S_1C.xml")
-    xform = do_load_form(form_xml)
-    with open("out/form_json.json", "w") as json_output:
-        json.dump(
-            XForm.of_mapping(xform).to_json(),
-            json_output,
-            ensure_ascii=True,
-            check_circular=True,
-            indent=4
-        )
 
 
 def main_pipeline_factory(out_dir: str) -> Pipeline[AppData, Any]:
