@@ -9,7 +9,7 @@ idna==3.3
 ipython==8.4.0
 jedi==0.18.1
 lml==0.1.0
-lxml==4.9.0
+lxml==4.9.1
 lxml-stubs==0.4.0
 matplotlib-inline==0.1.3
 mypy-extensions==0.4.3
