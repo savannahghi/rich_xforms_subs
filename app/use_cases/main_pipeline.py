@@ -116,7 +116,9 @@ class BQueryLabels(Consumer[AppData]):
                 self._xform_to_csv(xform)
 
     def _question_to_csv(self, question: Question) -> Sequence[_CSV_Record]:
-        csv_data: list[_CSV_Record] = [(question.xpath, question.label)]
+        csv_data: list[_CSV_Record] = [
+            (self._clean_xpath(question.xpath), self._make_title(question))
+        ]
 
         for question in question.sub_questions.values():
             csv_data.extend(self._question_to_csv(question))
@@ -132,7 +134,22 @@ class BQueryLabels(Consumer[AppData]):
             csv_data.extend(self._question_to_csv(question))
 
         save_data(
-            f"{self._out_dir}/{x_form.id}_{x_form.version}.csv",
+            f"{self._out_dir}/{x_form.id}_v{x_form.version}.csv",
             csv_data
         )
 
+    @staticmethod
+    def _clean_xpath(xpath: str) -> str:
+        return xpath.replace("/", "", 1).replace("/", "_").replace(".", "_")
+
+    @staticmethod
+    def _make_title(question: Question) -> str:
+        xpath_elements: list[str] = question.xpath.split("/")
+        assert len(xpath_elements) >= 3, (
+            "Expected xpath to have at least 3 elements."
+        )
+        label: str = question.label.\
+            replace("\\", "").\
+            replace("__", "").\
+            replace("**", "")
+        return f"{xpath_elements[2]} {label}"
