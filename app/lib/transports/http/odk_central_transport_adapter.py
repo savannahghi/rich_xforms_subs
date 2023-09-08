@@ -162,8 +162,11 @@ class ODKCentralHTTPTransportAdapter(HTTPTransportAdapter):
             response_content
         )
         return tuple(
-            (_version_data["version"]
-             for _version_data in versions_data)
+            _version_data["version"]
+            for _version_data in versions_data
+            # FIXME: THIS IS A HACK !!!!
+            #  A filter to get the latest version
+            if _version_data["enketoId"] is not None
         )
 
     def response_to_forms(

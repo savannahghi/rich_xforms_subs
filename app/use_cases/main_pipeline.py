@@ -1,10 +1,22 @@
 import json
 import logging
+from collections.abc import Mapping, Sequence
 from typing import Any, Callable
 
-from app.core import AppData, Task, Transport
+from app.core import AppData, Question, Task, Transport, XForm
 from app.lib import Consumer
 from app.utils import ensure_not_none
+
+from pyexcel_io import save_data
+
+# =============================================================================
+# TYPES
+# =============================================================================
+
+_CSV_Record = tuple[
+    str,  # XPath
+    str  # Question Label
+]
 
 # =============================================================================
 # CONSTANTS
@@ -85,3 +97,42 @@ class FetchSubmissions(Task[AppData, AppData]):
                     submission=_sub
                 )
         return an_input
+
+
+class BQueryLabels(Consumer[AppData]):
+
+    def __init__(self, out_dir: str):
+        self._out_dir: str = out_dir
+        super().__init__(self._do_consume)
+
+    def _do_consume(self, app_data: AppData) -> None:
+        for form_id in app_data.data:
+            form_versions = app_data.get_all_form_versions(form_id)
+            for xform in form_versions.values():
+                LOGGER.info(
+                    'Generating BQuery labels for form with id="%s" and '
+                    'version="%s"', form_id, xform.version
+                )
+                self._xform_to_csv(xform)
+
+    def _question_to_csv(self, question: Question) -> Sequence[_CSV_Record]:
+        csv_data: list[_CSV_Record] = [(question.xpath, question.label)]
+
+        for question in question.sub_questions.values():
+            csv_data.extend(self._question_to_csv(question))
+
+        return csv_data
+
+    def _xform_to_csv(self, x_form: XForm) -> None:
+        questions: Mapping[str, Question]
+        questions = x_form.primary_instance.document_root.questions
+
+        csv_data: list[_CSV_Record] = []
+        for question in questions.values():
+            csv_data.extend(self._question_to_csv(question))
+
+        save_data(
+            f"{self._out_dir}/{x_form.id}_{x_form.version}.csv",
+            csv_data
+        )
+

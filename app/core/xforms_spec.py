@@ -151,7 +151,7 @@ class Question(XFormsNode):
                 ),
                 sub_questions_mappings.items()
             )
-        ) if sub_questions_mappings else None
+        ) if sub_questions_mappings else {}
         return cls(**_copy)
 
 
@@ -240,8 +240,8 @@ class SecondaryInstanceDocumentRoot(XFormsNode):
 
     @classmethod
     def of_mapping(
-            cls,
-            mapping: SecondaryInstanceMapping
+        cls,
+        mapping: SecondaryInstanceMapping
     ) -> "SecondaryInstanceDocumentRoot":
         _item_mapping: SecondaryInstanceItemMapping
         return cls(**{

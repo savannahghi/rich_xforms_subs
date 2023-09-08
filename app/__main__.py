@@ -9,7 +9,7 @@ from app.lib import Pipeline
 from app.use_cases.main_pipeline import (
     AppDataToJson,
     FetchForms,
-    FetchSubmissions,
+    BQueryLabels,
 )
 from app.utils import import_string
 
@@ -110,8 +110,7 @@ def main_pipeline_factory(out_dir: str) -> Pipeline[AppData, Any]:
     return Pipeline(
         FetchForms(transport=transport),
         AppDataToJson(file_path="%s/%s" % (out_dir, "all_forms.json")),
-        FetchSubmissions(transport=transport),
-        AppDataToJson(file_path="%s/%s" % (out_dir, "all_forms_and_subs.json")),
+        BQueryLabels(out_dir=out_dir),
     )
 
 
